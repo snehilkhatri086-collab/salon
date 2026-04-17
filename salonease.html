@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalonEase – Luxury Salon Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --gold-dark: #a07840;
+    --charcoal: #1a1612;
+    --brown: #3d2b1f;
+    --muted: #8a7a6e;
+    --rose: #d4847a;
+    --sage: #7a9e8a;
+    --card-bg: rgba(255,249,243,0.85);
+    --shadow: 0 8px 40px rgba(26,22,18,0.12);
+    --shadow-lg: 0 20px 60px rgba(26,22,18,0.18);
+    --radius: 16px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--gold-light);
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 600; letter-spacing: 2px;
+    color: var(--charcoal);
+  }
+  .logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    font-size: 13px; font-weight: 400; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); text-decoration: none;
+    transition: color .3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .btn-nav {
+    background: var(--charcoal); color: var(--cream) !important;
+    padding: 10px 24px; border-radius: 50px;
+    font-size: 12px !important; letter-spacing: 2px !important;
+    transition: background .3s !important;
+  }
+  .btn-nav:hover { background: var(--gold) !important; color: var(--charcoal) !important; }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; padding-top: 80px; }
+  .page.active { display: block; animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* ─── HERO ─── */
+  #page-home {
+    background: linear-gradient(135deg, #faf7f2 0%, #f5ede0 50%, #ede0d0 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero-bg-circle {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-light) 0%, transparent 70%);
+    opacity: 0.35;
+  }
+  .hero-bg-circle.c1 { width: 600px; height: 600px; top: -200px; right: -100px; }
+  .hero-bg-circle.c2 { width: 400px; height: 400px; bottom: -100px; left: -100px; }
+
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+    max-width: 1200px; margin: 0 auto; padding: 80px 48px;
+    align-items: center; min-height: calc(100vh - 80px);
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold-light); color: var(--gold-dark);
+    padding: 6px 16px; border-radius: 50px;
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 24px;
+  }
+  .hero-tag::before { content: '✦'; font-size: 8px; }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 6vw, 80px); line-height: 1.05;
+    font-weight: 300; color: var(--charcoal); margin-bottom: 24px;
+  }
+  h1 em { font-style: italic; color: var(--gold); }
+  .hero-desc {
+    font-size: 16px; color: var(--muted); line-height: 1.7;
+    max-width: 480px; margin-bottom: 40px;
+  }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--charcoal); color: var(--cream);
+    padding: 16px 36px; border-radius: 50px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: all .3s;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,169,110,0.35); }
+  .btn-outline {
+    background: transparent; color: var(--charcoal);
+    padding: 16px 36px; border-radius: 50px;
+    border: 1.5px solid var(--charcoal);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: all .3s;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 56px;
+    padding-top: 40px; border-top: 1px solid var(--gold-light);
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 600; color: var(--charcoal);
+  }
+  .stat-lbl { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+  /* Hero visual */
+  .hero-visual {
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .salon-card {
+    background: white; border-radius: 24px; padding: 32px;
+    box-shadow: var(--shadow-lg); width: 100%; max-width: 400px;
+    position: relative; z-index: 2;
+  }
+  .salon-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px;
+  }
+  .salon-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600;
+  }
+  .badge-live {
+    background: #e8f5e9; color: #388e3c;
+    padding: 4px 12px; border-radius: 50px;
+    font-size: 11px; font-weight: 500;
+  }
+  .badge-live::before { content: '● '; font-size: 8px; }
+
+  /* Chairs grid */
+  .chairs-mini { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+  .chair-mini {
+    padding: 12px 8px; border-radius: 12px; text-align: center;
+    font-size: 11px; font-weight: 500; transition: transform .2s;
+  }
+  .chair-mini:hover { transform: scale(1.05); }
+  .chair-mini .icon { font-size: 22px; margin-bottom: 4px; }
+  .chair-mini.available { background: #f0faf4; color: #2e7d52; border: 1.5px solid #a5d6b8; }
+  .chair-mini.occupied { background: #fff3f2; color: #c0392b; border: 1.5px solid #f5a9a3; }
+  .chair-mini.reserved { background: #fffbeb; color: #b45309; border: 1.5px solid #fcd68a; }
+  .appt-mini { background: var(--cream); border-radius: 12px; padding: 12px 16px; }
+  .appt-mini-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+  .appt-time { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--charcoal); }
+
+  .floating-card {
+    position: absolute; background: white;
+    border-radius: 16px; padding: 16px 20px;
+    box-shadow: var(--shadow); font-size: 13px;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .floating-card.f1 { top: 10px; left: -60px; animation-delay: 0s; }
+  .floating-card.f2 { bottom: 10px; right: -60px; animation-delay: 2s; }
+  .fc-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .fc-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold); }
+
+  /* ─── SECTION COMMONS ─── */
+  .section { max-width: 1200px; margin: 0 auto; padding: 80px 48px; }
+  .section-tag {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px); font-weight: 300; line-height: 1.15;
+    color: var(--charcoal); margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 520px; }
+
+  /* ─── SERVICES ─── */
+  #page-services { background: var(--warm-white); }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 24px; margin-top: 56px; }
+  .service-card {
+    background: white; border-radius: var(--radius); padding: 36px 28px;
+    box-shadow: var(--shadow); cursor: pointer;
+    transition: all .3s; border: 1px solid transparent; position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--gold-light), transparent);
+    opacity: 0; transition: opacity .3s;
+  }
+  .service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--gold-light); }
+  .service-card:hover::before { opacity: 0.3; }
+  .service-icon { font-size: 40px; margin-bottom: 20px; }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 600; margin-bottom: 8px;
+  }
+  .service-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  .service-meta { display: flex; justify-content: space-between; align-items: center; }
+  .service-price { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold); font-weight: 600; }
+  .service-dur { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+
+  /* ─── CHAIRS PAGE ─── */
+  #page-chairs { background: var(--cream); }
+  .chairs-layout {
+    display: grid; grid-template-columns: 1fr 360px; gap: 40px; margin-top: 56px;
+  }
+  .salon-floor {
+    background: white; border-radius: 24px; padding: 40px;
+    box-shadow: var(--shadow); position: relative;
+  }
+  .floor-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 600; margin-bottom: 8px;
+  }
+  .floor-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+  .chairs-floor { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+  .chair-card {
+    padding: 20px 16px; border-radius: 16px; text-align: center;
+    cursor: pointer; transition: all .3s; border: 2px solid transparent;
+  }
+  .chair-card .chair-icon { font-size: 36px; margin-bottom: 10px; }
+  .chair-card .chair-id { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; }
+  .chair-card .chair-status { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .chair-card .chair-stylist { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .chair-card.available { background: #f0faf4; border-color: #a5d6b8; }
+  .chair-card.available .chair-status { color: #2e7d52; }
+  .chair-card.occupied { background: #fff3f2; border-color: #f5a9a3; }
+  .chair-card.occupied .chair-status { color: #c0392b; }
+  .chair-card.reserved { background: #fffbeb; border-color: #fcd68a; }
+  .chair-card.reserved .chair-status { color: #b45309; }
+  .chair-card:hover { transform: scale(1.05); box-shadow: var(--shadow); }
+
+  .chair-legend { display: flex; gap: 20px; margin-top: 28px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-dot.available { background: #2e7d52; }
+  .legend-dot.occupied { background: #c0392b; }
+  .legend-dot.reserved { background: #b45309; }
+
+  .chair-detail {
+    background: white; border-radius: 24px; padding: 32px;
+    box-shadow: var(--shadow); height: fit-content;
+  }
+  .chair-detail-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin-bottom: 24px; }
+  .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gold-light); font-size: 14px; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { color: var(--muted); }
+  .detail-val { font-weight: 500; }
+  .chair-queue { margin-top: 24px; }
+  .queue-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .queue-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--cream); font-size: 13px; }
+  .queue-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--gold-light); display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: var(--gold-dark); flex-shrink: 0;
+  }
+  .queue-time { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  /* ─── BOOKING PAGE ─── */
+  #page-booking { background: var(--warm-white); }
+  .booking-layout { display: grid; grid-template-columns: 1fr 400px; gap: 48px; margin-top: 56px; }
+  .booking-form {
+    background: white; border-radius: 24px; padding: 48px;
+    box-shadow: var(--shadow);
+  }
+  .form-step {
+    display: none;
+  }
+  .form-step.active { display: block; animation: fadeIn .3s ease; }
+  .steps-indicator { display: flex; align-items: center; margin-bottom: 40px; gap: 0; }
+  .step-dot {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gold-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    transition: all .3s; flex-shrink: 0; background: white; cursor: pointer;
+  }
+  .step-dot.active { background: var(--charcoal); border-color: var(--charcoal); color: white; }
+  .step-dot.done { background: var(--gold); border-color: var(--gold); color: white; }
+  .step-line { flex: 1; height: 2px; background: var(--gold-light); transition: background .3s; }
+  .step-line.done { background: var(--gold); }
+  .step-label { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  .form-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+  .form-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 1.5px solid var(--gold-light); background: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--charcoal);
+    outline: none; transition: border-color .3s, box-shadow .3s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,.12);
+  }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+
+  .service-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .service-pill {
+    padding: 8px 18px; border-radius: 50px; font-size: 13px;
+    border: 1.5px solid var(--gold-light); background: white;
+    cursor: pointer; transition: all .2s; color: var(--charcoal);
+  }
+  .service-pill:hover { border-color: var(--gold); color: var(--gold); }
+  .service-pill.selected { background: var(--charcoal); border-color: var(--charcoal); color: white; }
+
+  .time-slots { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 8px; }
+  .time-slot {
+    padding: 10px 6px; border-radius: 10px; text-align: center;
+    font-size: 13px; border: 1.5px solid var(--gold-light); background: white;
+    cursor: pointer; transition: all .2s;
+  }
+  .time-slot:hover { border-color: var(--gold); color: var(--gold); }
+  .time-slot.selected { background: var(--charcoal); border-color: var(--charcoal); color: white; }
+  .time-slot.disabled { opacity: 0.4; pointer-events: none; background: var(--cream); }
+
+  .form-nav { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; }
+  .btn-back { background: transparent; color: var(--muted); border: 1.5px solid var(--gold-light); padding: 14px 28px; border-radius: 50px; font-family: 'DM Sans',sans-serif; font-size: 13px; cursor: pointer; transition: all .3s; }
+  .btn-back:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .btn-next { background: var(--charcoal); color: var(--cream); border: none; padding: 14px 36px; border-radius: 50px; font-family: 'DM Sans',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .3s; }
+  .btn-next:hover { background: var(--gold); transform: translateY(-2px); }
+
+  /* booking summary sidebar */
+  .booking-summary { position: sticky; top: 100px; }
+  .summary-card { background: white; border-radius: 24px; padding: 32px; box-shadow: var(--shadow); }
+  .summary-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin-bottom: 24px; }
+  .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--cream); font-size: 14px; }
+  .summary-label { color: var(--muted); }
+  .summary-val { font-weight: 500; text-align: right; }
+  .summary-total { display: flex; justify-content: space-between; padding: 16px 0; font-size: 16px; font-weight: 600; margin-top: 4px; }
+  .summary-total .price { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold); }
+
+  /* confirmation */
+  .confirmation {
+    text-align: center; padding: 48px 32px; display: none;
+  }
+  .confirmation.active { display: block; animation: fadeIn .5s ease; }
+  .confirm-icon { font-size: 72px; margin-bottom: 24px; animation: pop .5s ease; }
+  @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+  .confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; margin-bottom: 12px; }
+  .confirm-id { font-size: 13px; color: var(--muted); letter-spacing: 2px; margin-bottom: 32px; }
+  .confirm-details { background: var(--cream); border-radius: 16px; padding: 24px; text-align: left; }
+
+  /* ─── ADMIN PAGE ─── */
+  #page-admin { background: var(--charcoal); color: var(--cream); min-height: 100vh; }
+  #page-admin .section-title { color: var(--cream); }
+  #page-admin .section-tag { color: var(--gold); }
+
+  .admin-login {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 80px); padding: 40px;
+  }
+  .admin-login-card {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(201,169,110,.2);
+    backdrop-filter: blur(20px); border-radius: 24px;
+    padding: 56px 48px; width: 100%; max-width: 440px;
+    box-shadow: 0 32px 80px rgba(0,0,0,.4);
+  }
+  .admin-logo { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; text-align: center; margin-bottom: 8px; }
+  .admin-logo span { color: var(--gold); }
+  .admin-sub { text-align: center; color: rgba(255,255,255,.4); font-size: 14px; margin-bottom: 40px; }
+  .admin-form-group { margin-bottom: 20px; }
+  .admin-form-group label { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 8px; }
+  .admin-form-group input {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 1px solid rgba(201,169,110,.2); background: rgba(255,255,255,.06);
+    font-family: 'DM Sans',sans-serif; font-size: 14px; color: white;
+    outline: none; transition: border-color .3s;
+  }
+  .admin-form-group input:focus { border-color: var(--gold); }
+  .btn-admin { width: 100%; background: var(--gold); color: var(--charcoal); border: none; padding: 16px; border-radius: 12px; font-family: 'DM Sans',sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .3s; margin-top: 8px; }
+  .btn-admin:hover { background: var(--gold-dark); transform: translateY(-2px); }
+
+  .admin-dashboard { display: none; padding: 0 48px 48px; }
+  .admin-dashboard.active { display: block; animation: fadeIn .4s ease; }
+  .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 32px 0; border-bottom: 1px solid rgba(201,169,110,.15); margin-bottom: 40px; }
+  .admin-greeting { font-family: 'Cormorant Garamond', serif; font-size: 32px; }
+  .admin-greeting span { color: var(--gold); }
+  .btn-logout { background: transparent; color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.15); padding: 10px 24px; border-radius: 50px; font-size: 13px; cursor: pointer; transition: all .3s; }
+  .btn-logout:hover { color: var(--rose); border-color: var(--rose); }
+
+  .admin-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 40px; }
+  .admin-stat {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(201,169,110,.1);
+    border-radius: 16px; padding: 24px;
+  }
+  .admin-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--gold); }
+  .admin-stat-lbl { font-size: 12px; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+  .admin-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+  .admin-card { background: rgba(255,255,255,.05); border: 1px solid rgba(201,169,110,.1); border-radius: 20px; padding: 28px; }
+  .admin-card-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--cream); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .admin-card-title span { font-size: 12px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+
+  .appt-table { width: 100%; border-collapse: collapse; }
+  .appt-table th { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.35); padding: 8px 12px; text-align: left; }
+  .appt-table td { padding: 14px 12px; font-size: 14px; border-top: 1px solid rgba(255,255,255,.05); }
+  .appt-table tr:hover td { background: rgba(201,169,110,.05); }
+  .badge {
+    padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 500;
+  }
+  .badge.confirmed { background: rgba(46,125,82,.2); color: #6fcf97; }
+  .badge.pending { background: rgba(180,83,9,.2); color: #fbbf24; }
+  .badge.completed { background: rgba(37,99,235,.2); color: #93c5fd; }
+  .badge.cancelled { background: rgba(192,57,43,.2); color: #f87171; }
+
+  .edit-time-btn {
+    background: rgba(201,169,110,.15); color: var(--gold);
+    border: 1px solid rgba(201,169,110,.2); padding: 5px 12px;
+    border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s;
+  }
+  .edit-time-btn:hover { background: rgba(201,169,110,.25); }
+
+  .admin-chair-list { display: flex; flex-direction: column; gap: 12px; }
+  .admin-chair-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+  }
+  .admin-chair-num { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; min-width: 30px; }
+  .admin-chair-info { flex: 1; }
+  .admin-chair-name { font-size: 14px; margin-bottom: 2px; }
+  .admin-chair-stylist { font-size: 12px; color: rgba(255,255,255,.4); }
+  .chair-badge { padding: 4px 10px; border-radius: 50px; font-size: 11px; }
+  .chair-badge.available { background: rgba(46,125,82,.2); color: #6fcf97; }
+  .chair-badge.occupied { background: rgba(192,57,43,.2); color: #f87171; }
+  .chair-badge.reserved { background: rgba(180,83,9,.2); color: #fbbf24; }
+
+  /* modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+    z-index: 1000; align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn .2s ease; }
+  .modal {
+    background: white; border-radius: 24px; padding: 40px;
+    width: 100%; max-width: 480px; position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,.3);
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; margin-bottom: 24px; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--cream); border: none; width: 36px; height: 36px;
+    border-radius: 50%; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s; color: var(--charcoal);
+  }
+  .modal-close:hover { background: var(--gold-light); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px;
+    background: var(--charcoal); color: var(--cream);
+    padding: 16px 24px; border-radius: 12px; font-size: 14px;
+    box-shadow: var(--shadow-lg); z-index: 9000;
+    transform: translateY(100px); opacity: 0;
+    transition: all .4s cubic-bezier(.34,1.56,.64,1);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 4px solid var(--sage); }
+  .toast.error { border-left: 4px solid var(--rose); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--charcoal); color: rgba(255,255,255,.5);
+    padding: 48px; text-align: center;
+  }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--cream); margin-bottom: 12px; }
+  .footer-logo span { color: var(--gold); }
+  .footer-copy { font-size: 13px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { gap: 16px; }
+    .hero { grid-template-columns: 1fr; padding: 48px 24px; gap: 40px; }
+    .hero-visual { display: none; }
+    .section { padding: 60px 24px; }
+    .booking-layout, .chairs-layout, .admin-grid { grid-template-columns: 1fr; }
+    .admin-stats { grid-template-columns: repeat(2,1fr); }
+    .chairs-floor { grid-template-columns: repeat(3,1fr); }
+    .time-slots { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="logo">Salon<span>Ease</span></div>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('services')">Services</a>
+    <a href="#" onclick="showPage('chairs')">Chairs</a>
+    <a href="#" onclick="showPage('booking')">Book Now</a>
+    <a href="#" onclick="showPage('admin')" class="btn-nav">Admin</a>
+  </div>
+</nav>
+
+<!-- ─── HOME PAGE ─── -->
+<div id="page-home" class="page active">
+  <div class="hero-bg-circle c1"></div>
+  <div class="hero-bg-circle c2"></div>
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Premium Salon Experience</div>
+      <h1>Where Style<br>Meets <em>Luxury</em></h1>
+      <p class="hero-desc">Experience world-class beauty treatments in an environment crafted for your comfort. Book your appointment in seconds, manage your beauty journey effortlessly.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('booking')">Book Appointment</button>
+        <button class="btn-outline" onclick="showPage('services')">Our Services</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">2,400+</div>
+          <div class="stat-lbl">Happy Clients</div>
+        </div>
+        <div>
+          <div class="stat-num">12</div>
+          <div class="stat-lbl">Expert Stylists</div>
+        </div>
+        <div>
+          <div class="stat-num">8</div>
+          <div class="stat-lbl">Service Chairs</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-card f1">
+        <div class="fc-label">Today's Bookings</div>
+        <div class="fc-val" id="hero-bookings">0</div>
+      </div>
+      <div class="salon-card">
+        <div class="salon-card-header">
+          <div class="salon-card-title">Chair Availability</div>
+          <div class="badge-live">Live</div>
+        </div>
+        <div class="chairs-mini" id="hero-chairs">
+          <!-- dynamically filled -->
+        </div>
+        <div class="appt-mini">
+          <div class="appt-mini-row">
+            <span>Next available slot</span>
+            <span class="appt-time">10:30 AM</span>
+          </div>
+        </div>
+      </div>
+      <div class="floating-card f2">
+        <div class="fc-label">Satisfaction Rate</div>
+        <div class="fc-val">98%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SERVICES PAGE ─── -->
+<div id="page-services" class="page">
+  <div class="section">
+    <div class="section-tag">✦ What We Offer</div>
+    <h2 class="section-title">Our <em>Signature</em> Services</h2>
+    <p class="section-sub">Discover our curated menu of beauty and wellness treatments, each designed to deliver exceptional results.</p>
+    <div class="services-grid" id="services-grid"></div>
+  </div>
+</div>
+
+<!-- ─── CHAIRS PAGE ─── -->
+<div id="page-chairs" class="page">
+  <div class="section">
+    <div class="section-tag">✦ Real-Time Availability</div>
+    <h2 class="section-title">Service <em>Chairs</em></h2>
+    <p class="section-sub">View live chair availability across our salon floor. Green means ready for you right now.</p>
+    <div class="chairs-layout">
+      <div class="salon-floor">
+        <div class="floor-title">Salon Floor – Ground Level</div>
+        <div class="floor-subtitle">8 premium styling chairs • Last updated: just now</div>
+        <div class="chairs-floor" id="chairs-floor"></div>
+        <div class="chair-legend">
+          <div class="legend-item"><div class="legend-dot available"></div> Available</div>
+          <div class="legend-item"><div class="legend-dot occupied"></div> Occupied</div>
+          <div class="legend-item"><div class="legend-dot reserved"></div> Reserved</div>
+        </div>
+      </div>
+      <div class="chair-detail" id="chair-detail">
+        <div class="chair-detail-title">Select a Chair</div>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;">Click any chair on the floor map to view details, current stylist, and upcoming appointments.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BOOKING PAGE ─── -->
+<div id="page-booking" class="page">
+  <div class="section">
+    <div class="section-tag">✦ Easy Booking</div>
+    <h2 class="section-title">Reserve Your <em>Appointment</em></h2>
+    <p class="section-sub">Complete your booking in just a few simple steps. Instant confirmation guaranteed.</p>
+    <div class="booking-layout">
+      <div>
+        <!-- Booking Form -->
+        <div class="booking-form" id="booking-form-wrap">
+          <!-- Steps indicator -->
+          <div>
+            <div class="steps-indicator">
+              <div class="step-dot active" id="sdot-1">1</div>
+              <div class="step-line" id="sline-1"></div>
+              <div class="step-dot" id="sdot-2">2</div>
+              <div class="step-line" id="sline-2"></div>
+              <div class="step-dot" id="sdot-3">3</div>
+              <div class="step-line" id="sline-3"></div>
+              <div class="step-dot" id="sdot-4">4</div>
+            </div>
+            <div style="display:grid;grid-template-columns:36px 1fr 36px 1fr 36px 1fr 36px;gap:0;margin-top:8px">
+              <div class="step-label">Info</div><div></div>
+              <div class="step-label">Service</div><div></div>
+              <div class="step-label">Date</div><div></div>
+              <div class="step-label">Confirm</div>
+            </div>
+          </div>
+
+          <!-- Step 1: Personal Info -->
+          <div class="form-step active" id="step-1">
+            <div class="form-title">Your Details</div>
+            <div class="form-sub">Tell us a little about yourself</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" id="f-firstname" placeholder="Priya">
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="f-lastname" placeholder="Sharma">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="f-email" placeholder="priya@example.com">
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="f-phone" placeholder="+91 98765 43210">
+            </div>
+            <div class="form-group">
+              <label>Notes (optional)</label>
+              <textarea id="f-notes" placeholder="Any special requests or preferences..."></textarea>
+            </div>
+            <div class="form-nav">
+              <button class="btn-next" onclick="goStep(2)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Choose Service -->
+          <div class="form-step" id="step-2">
+            <div class="form-title">Choose Service</div>
+            <div class="form-sub">Select one or more treatments</div>
+            <div class="service-pills" id="service-pills"></div>
+            <div class="form-group" style="margin-top:24px">
+              <label>Preferred Stylist</label>
+              <select id="f-stylist">
+                <option value="">No preference</option>
+                <option>Aisha Khan</option>
+                <option>Sofia Reyes</option>
+                <option>Priti Verma</option>
+                <option>Meena Joshi</option>
+              </select>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goStep(1)">← Back</button>
+              <button class="btn-next" onclick="goStep(3)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Date & Time -->
+          <div class="form-step" id="step-3">
+            <div class="form-title">Date & Time</div>
+            <div class="form-sub">Pick your preferred slot</div>
+            <div class="form-group">
+              <label>Select Date</label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="form-group">
+              <label>Available Time Slots</label>
+              <div class="time-slots" id="time-slots"></div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Chair</label>
+              <select id="f-chair">
+                <option value="">Auto-assign</option>
+                <option>Chair 1</option>
+                <option>Chair 2</option>
+                <option>Chair 3</option>
+                <option>Chair 4</option>
+                <option>Chair 5</option>
+                <option>Chair 6</option>
+                <option>Chair 7</option>
+                <option>Chair 8</option>
+              </select>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goStep(2)">← Back</button>
+              <button class="btn-next" onclick="goStep(4)">Review →</button>
+            </div>
+          </div>
+
+          <!-- Step 4: Review & Confirm -->
+          <div class="form-step" id="step-4">
+            <div class="form-title">Review & Confirm</div>
+            <div class="form-sub">Please verify your appointment details</div>
+            <div id="review-summary" style="background:var(--cream);border-radius:16px;padding:24px;margin-bottom:24px;"></div>
+            <div class="form-group">
+              <label>Payment Method</label>
+              <select id="f-payment">
+                <option>Pay at Salon</option>
+                <option>Online Payment (UPI)</option>
+                <option>Credit / Debit Card</option>
+              </select>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goStep(3)">← Back</button>
+              <button class="btn-next" onclick="submitBooking()" style="background:var(--sage);">✓ Confirm Booking</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmation -->
+        <div class="confirmation" id="booking-confirmation">
+          <div class="confirm-icon">🎉</div>
+          <div class="confirm-title">Booking Confirmed!</div>
+          <div class="confirm-id" id="confirm-id"></div>
+          <div class="confirm-details" id="confirm-details"></div>
+          <button class="btn-primary" style="margin-top:32px" onclick="resetBooking()">Book Another</button>
+        </div>
+      </div>
+
+      <!-- Booking Summary -->
+      <div class="booking-summary">
+        <div class="summary-card">
+          <div class="summary-title">Booking Summary</div>
+          <div class="summary-item"><span class="summary-label">Client</span><span class="summary-val" id="sum-name">—</span></div>
+          <div class="summary-item"><span class="summary-label">Service(s)</span><span class="summary-val" id="sum-service">—</span></div>
+          <div class="summary-item"><span class="summary-label">Stylist</span><span class="summary-val" id="sum-stylist">—</span></div>
+          <div class="summary-item"><span class="summary-label">Date</span><span class="summary-val" id="sum-date">—</span></div>
+          <div class="summary-item"><span class="summary-label">Time</span><span class="summary-val" id="sum-time">—</span></div>
+          <div class="summary-item"><span class="summary-label">Chair</span><span class="summary-val" id="sum-chair">—</span></div>
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="price" id="sum-price">₹0</span>
+          </div>
+        </div>
+        <!-- upcoming appointments teaser -->
+        <div class="summary-card" style="margin-top:20px;">
+          <div class="summary-title" style="font-size:16px;">Your Past Bookings</div>
+          <div id="client-history" style="font-size:13px;color:var(--muted);line-height:2;">No previous bookings found.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADMIN PAGE ─── -->
+<div id="page-admin" class="page">
+  <!-- Admin Login -->
+  <div class="admin-login" id="admin-login-view">
+    <div class="admin-login-card">
+      <div class="admin-logo">Salon<span>Ease</span></div>
+      <div class="admin-sub">Administrator Portal</div>
+      <div class="admin-form-group">
+        <label>Username</label>
+        <input type="text" id="admin-user" placeholder="admin" value="snehil">
+      </div>
+      <div class="admin-form-group">
+        <label>Password</label>
+        <input type="password" id="admin-pass" placeholder="••••••••" value="snehil1204">
+      </div>
+      <button class="btn-admin" onclick="adminLogin()">Access Dashboard →</button>
+      <p style="text-align:center;margin-top:16px;font-size:12px;color:rgba(255,255,255,.3);">Default: admin / salon123</p>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-dashboard" id="admin-dashboard-view">
+    <div class="admin-header">
+      <div class="admin-greeting">Welcome back, <span>Manager</span> 👋</div>
+      <button class="btn-logout" onclick="adminLogout()">Logout</button>
+    </div>
+
+    <!-- Stats row -->
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat-num" id="stat-today">0</div>
+        <div class="admin-stat-lbl">Today's Appointments</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num" id="stat-pending">0</div>
+        <div class="admin-stat-lbl">Pending Confirmations</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num" id="stat-available">0</div>
+        <div class="admin-stat-lbl">Available Chairs</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num" id="stat-revenue">₹0</div>
+        <div class="admin-stat-lbl">Today's Revenue</div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <!-- Appointments table -->
+      <div class="admin-card">
+        <div class="admin-card-title">
+          Appointments
+          <span>Manage & Adjust</span>
+        </div>
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Time</th>
+              <th>Chair</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-appt-body">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Chairs panel -->
+      <div>
+        <div class="admin-card">
+          <div class="admin-card-title">Chair Status <span>Live</span></div>
+          <div class="admin-chair-list" id="admin-chairs-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── EDIT TIME MODAL ─── -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Adjust Appointment</div>
+    <div class="form-group">
+      <label>Client Name</label>
+      <input type="text" id="modal-client" readonly style="opacity:.6">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>New Date</label>
+        <input type="date" id="modal-date">
+      </div>
+      <div class="form-group">
+        <label>New Time</label>
+        <input type="time" id="modal-time">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Assign Chair</label>
+      <select id="modal-chair">
+        <option>Chair 1</option><option>Chair 2</option><option>Chair 3</option>
+        <option>Chair 4</option><option>Chair 5</option><option>Chair 6</option>
+        <option>Chair 7</option><option>Chair 8</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="modal-status">
+        <option value="confirmed">Confirmed</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="form-nav" style="margin-top:0">
+      <button class="btn-back" onclick="closeModal()">Cancel</button>
+      <button class="btn-next" onclick="saveAppointment()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-logo">Salon<span>Ease</span></div>
+  <div class="footer-copy">© 2025 SalonEase. All rights reserved. Crafted with care for your beauty experience.</div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATABASE LAYER
+// ═══════════════════════════════════════════════════════
+
+// DB 1 – CLIENT DATA
+const clientDB = {
+  clients: JSON.parse(localStorage.getItem('se_clients') || '[]'),
+  appointments: JSON.parse(localStorage.getItem('se_appointments') || '[]'),
+
+  addClient(client) {
+    const existing = this.clients.find(c => c.email === client.email);
+    if (!existing) { this.clients.push(client); this.save(); }
+    return existing || client;
+  },
+  addAppointment(appt) {
+    this.appointments.push(appt);
+    this.save();
+  },
+  getClientAppointments(email) {
+    return this.appointments.filter(a => a.email === email);
+  },
+  save() {
+    localStorage.setItem('se_clients', JSON.stringify(this.clients));
+    localStorage.setItem('se_appointments', JSON.stringify(this.appointments));
+  }
+};
+
+// DB 2 – ADMIN DATA
+const adminDB = {
+  appointments: JSON.parse(localStorage.getItem('se_admin_appts') || 'null'),
+  chairs: JSON.parse(localStorage.getItem('se_chairs') || 'null'),
+  credentials: { username: 'snehil', password: 'snehil1204' },
+
+  init() {
+    if (!this.appointments) {
+      this.appointments = [
+        { id:'A001', client:'Riya Gupta', email:'riya@example.com', service:'Hair Cut & Style', time:'09:30 AM', date:'Today', chair:'Chair 2', status:'confirmed', price:800 },
+        { id:'A002', client:'Neha Patel', email:'neha@example.com', service:'Bridal Makeup', time:'11:00 AM', date:'Today', chair:'Chair 5', status:'confirmed', price:4500 },
+        { id:'A003', client:'Sunita Rao', email:'sunita@example.com', service:'Spa Treatment', time:'01:30 PM', date:'Today', chair:'Chair 3', status:'pending', price:2000 },
+        { id:'A004', client:'Kavita Singh', email:'kavita@example.com', service:'Hair Color', time:'03:00 PM', date:'Today', chair:'Chair 1', status:'pending', price:1500 },
+        { id:'A005', client:'Pooja Mehta', email:'pooja@example.com', service:'Nail Art', time:'04:30 PM', date:'Today', chair:'Chair 7', status:'completed', price:600 },
+      ];
+    }
+    if (!this.chairs) {
+      this.chairs = [
+        { id:1, label:'Chair 1', stylist:'Aisha Khan', status:'reserved' },
+        { id:2, label:'Chair 2', stylist:'Sofia Reyes', status:'occupied' },
+        { id:3, label:'Chair 3', stylist:'Priti Verma', status:'occupied' },
+        { id:4, label:'Chair 4', stylist:'Meena Joshi', status:'available' },
+        { id:5, label:'Chair 5', stylist:'Aisha Khan', status:'occupied' },
+        { id:6, label:'Chair 6', stylist:'Unassigned', status:'available' },
+        { id:7, label:'Chair 7', stylist:'Sofia Reyes', status:'occupied' },
+        { id:8, label:'Chair 8', stylist:'Priti Verma', status:'available' },
+      ];
+    }
+    this.save();
+  },
+  save() {
+    localStorage.setItem('se_admin_appts', JSON.stringify(this.appointments));
+    localStorage.setItem('se_chairs', JSON.stringify(this.chairs));
+  },
+  updateAppointment(id, changes) {
+    const i = this.appointments.findIndex(a => a.id === id);
+    if (i !== -1) { Object.assign(this.appointments[i], changes); this.save(); }
+    // Sync to client DB
+    const j = clientDB.appointments.findIndex(a => a.id === id);
+    if (j !== -1) { Object.assign(clientDB.appointments[j], changes); clientDB.save(); }
+  }
+};
+
+adminDB.init();
+
+// ═══════════════════════════════════════════════════════
+//  SERVICES DATA
+// ═══════════════════════════════════════════════════════
+const services = [
+  { icon:'✂️', name:'Hair Cut & Style', desc:'Precision cuts tailored to your face shape and style preferences.', price:800, duration:'45 min' },
+  { icon:'🎨', name:'Hair Color', desc:'Vibrant, long-lasting color using premium international brands.', price:1500, duration:'90 min' },
+  { icon:'💆‍♀️', name:'Spa Treatment', desc:'Rejuvenating head-to-toe relaxation for body and mind.', price:2000, duration:'60 min' },
+  { icon:'💄', name:'Bridal Makeup', desc:'Flawless bridal looks crafted for your most special day.', price:4500, duration:'120 min' },
+  { icon:'💅', name:'Nail Art', desc:'Creative nail designs from minimal to elaborate artistry.', price:600, duration:'45 min' },
+  { icon:'🌿', name:'Keratin Treatment', desc:'Smooth, frizz-free hair with our premium keratin formula.', price:3200, duration:'180 min' },
+  { icon:'👁️', name:'Eyebrow Threading', desc:'Perfectly shaped brows that frame your face beautifully.', price:150, duration:'15 min' },
+  { icon:'✨', name:'Facial & Cleanup', desc:'Deep cleansing and brightening facial for glowing skin.', price:1200, duration:'60 min' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  PAGE ROUTING
+// ═══════════════════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'services') renderServices();
+  if (name === 'chairs') renderChairs();
+  if (name === 'booking') renderBookingServices();
+  if (name === 'home') renderHeroChairs();
+}
+
+// ═══════════════════════════════════════════════════════
+//  HERO
+// ═══════════════════════════════════════════════════════
+function renderHeroChairs() {
+  const container = document.getElementById('hero-chairs');
+  const icons = ['💺','💺','💺','💺','💺','💺'];
+  const statusMap = adminDB.chairs.slice(0,6).map(c => c.status);
+  container.innerHTML = statusMap.map((s,i) => `
+    <div class="chair-mini ${s}">
+      <div class="icon">💺</div>
+      <div>C${i+1}</div>
+    </div>
+  `).join('');
+  document.getElementById('hero-bookings').textContent = adminDB.appointments.length;
+}
+renderHeroChairs();
+
+// ═══════════════════════════════════════════════════════
+//  SERVICES PAGE
+// ═══════════════════════════════════════════════════════
+function renderServices() {
+  document.getElementById('services-grid').innerHTML = services.map(s => `
+    <div class="service-card" onclick="quickBook('${s.name}')">
+      <div class="service-icon">${s.icon}</div>
+      <div class="service-name">${s.name}</div>
+      <div class="service-desc">${s.desc}</div>
+      <div class="service-meta">
+        <div class="service-price">₹${s.price.toLocaleString()}</div>
+        <div class="service-dur">⏱ ${s.duration}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function quickBook(svcName) {
+  showPage('booking');
+  setTimeout(() => {
+    document.querySelectorAll('.service-pill').forEach(p => {
+      if (p.dataset.name === svcName) p.classList.add('selected');
+    });
+    updateSummary();
+  }, 100);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAIRS PAGE
+// ═══════════════════════════════════════════════════════
+function renderChairs() {
+  const floor = document.getElementById('chairs-floor');
+  floor.innerHTML = adminDB.chairs.map(c => `
+    <div class="chair-card ${c.status}" onclick="showChairDetail(${c.id})">
+      <div class="chair-icon">💺</div>
+      <div class="chair-id">${c.label}</div>
+      <div class="chair-status">${c.status}</div>
+      <div class="chair-stylist">${c.stylist}</div>
+    </div>
+  `).join('');
+}
+
+function showChairDetail(id) {
+  const chair = adminDB.chairs.find(c => c.id === id);
+  const appts = adminDB.appointments.filter(a => a.chair === chair.label);
+  const statusColor = { available:'#2e7d52', occupied:'#c0392b', reserved:'#b45309' };
+
+  document.getElementById('chair-detail').innerHTML = `
+    <div class="chair-detail-title">${chair.label}</div>
+    <div class="detail-row"><span class="detail-label">Stylist</span><span class="detail-val">${chair.stylist}</span></div>
+    <div class="detail-row"><span class="detail-label">Status</span>
+      <span class="detail-val" style="color:${statusColor[chair.status]};text-transform:capitalize">${chair.status}</span></div>
+    <div class="detail-row"><span class="detail-label">Station</span><span class="detail-val">Ground Floor</span></div>
+    <div class="chair-queue">
+      <div class="queue-title">Today's Queue</div>
+      ${appts.length ? appts.map(a => `
+        <div class="queue-item">
+          <div class="queue-avatar">${a.client[0]}</div>
+          <div>
+            <div style="font-weight:500">${a.client}</div>
+            <div style="font-size:12px;color:var(--muted)">${a.service}</div>
+          </div>
+          <div class="queue-time">${a.time}</div>
+        </div>
+      `).join('') : '<div style="color:var(--muted);font-size:13px;padding:8px 0">No appointments queued</div>'}
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:20px" onclick="showPage('booking')">Book This Chair</button>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BOOKING FLOW
+// ═══════════════════════════════════════════════════════
+let currentStep = 1;
+let selectedServices = [];
+let selectedTime = '';
+
+function renderBookingServices() {
+  document.getElementById('service-pills').innerHTML = services.map(s => `
+    <div class="service-pill" data-name="${s.name}" data-price="${s.price}" onclick="toggleService(this)">
+      ${s.icon} ${s.name}
+    </div>
+  `).join('');
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').min = today;
+  document.getElementById('f-date').value = today;
+  renderTimeSlots();
+}
+
+function toggleService(el) {
+  el.classList.toggle('selected');
+  updateSummary();
+}
+
+function renderTimeSlots() {
+  const times = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+  const bookedTimes = adminDB.appointments.map(a => a.time.replace(' AM','').replace(' PM','').trim());
+  document.getElementById('time-slots').innerHTML = times.map(t => {
+    const h = parseInt(t.split(':')[0]);
+    const display = h >= 12 ? `${h > 12 ? h-12 : h}:${t.split(':')[1]} PM` : `${h}:${t.split(':')[1]} AM`;
+    const disabled = Math.random() < 0.2; // random unavailability demo
+    return `<div class="time-slot ${disabled?'disabled':''}" onclick="selectTime(this,'${display}')">${display}</div>`;
+  }).join('');
+}
+
+function selectTime(el, time) {
+  document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime = time;
+  updateSummary();
+}
+
+function updateSummary() {
+  const fn = document.getElementById('f-firstname')?.value;
+  const ln = document.getElementById('f-lastname')?.value;
+  const stylist = document.getElementById('f-stylist')?.value;
+  const date = document.getElementById('f-date')?.value;
+  const chair = document.getElementById('f-chair')?.value;
+
+  const pills = document.querySelectorAll('.service-pill.selected');
+  selectedServices = Array.from(pills).map(p => ({ name: p.dataset.name, price: parseInt(p.dataset.price) }));
+  const total = selectedServices.reduce((s, x) => s + x.price, 0);
+
+  document.getElementById('sum-name').textContent = (fn || '') + ' ' + (ln || '') || '—';
+  document.getElementById('sum-service').textContent = selectedServices.map(s => s.name).join(', ') || '—';
+  document.getElementById('sum-stylist').textContent = stylist || 'No preference';
+  document.getElementById('sum-date').textContent = date || '—';
+  document.getElementById('sum-time').textContent = selectedTime || '—';
+  document.getElementById('sum-chair').textContent = chair || 'Auto-assign';
+  document.getElementById('sum-price').textContent = '₹' + total.toLocaleString();
+}
+
+function goStep(n) {
+  // Validate
+  if (n === 2 && currentStep === 1) {
+    const fn = document.getElementById('f-firstname').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!fn || !email) { showToast('Please fill in your name and email', 'error'); return; }
+  }
+  if (n === 3 && currentStep === 2) {
+    if (!selectedServices.length) { showToast('Please select at least one service', 'error'); return; }
+  }
+  if (n === 4 && currentStep === 3) {
+    if (!selectedTime) { showToast('Please select a time slot', 'error'); return; }
+    buildReview();
+  }
+
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('step-' + n).classList.add('active');
+
+  // Update dots
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('sdot-' + i);
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done'), dot.textContent = '✓';
+    else if (i === n) dot.classList.add('active'), dot.textContent = i;
+    else dot.textContent = i;
+  }
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById('sline-' + i);
+    line.classList.toggle('done', i < n);
+  }
+
+  currentStep = n;
+  updateSummary();
+}
+
+function buildReview() {
+  const fn = document.getElementById('f-firstname').value;
+  const ln = document.getElementById('f-lastname').value;
+  const email = document.getElementById('f-email').value;
+  const phone = document.getElementById('f-phone').value;
+  const date = document.getElementById('f-date').value;
+  const stylist = document.getElementById('f-stylist').value || 'No preference';
+  const chair = document.getElementById('f-chair').value || 'Auto-assign';
+  const notes = document.getElementById('f-notes').value;
+  const total = selectedServices.reduce((s, x) => s + x.price, 0);
+
+  document.getElementById('review-summary').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
+      <div><span style="color:var(--muted)">Name:</span><br><strong>${fn} ${ln}</strong></div>
+      <div><span style="color:var(--muted)">Email:</span><br><strong>${email}</strong></div>
+      <div><span style="color:var(--muted)">Date:</span><br><strong>${date}</strong></div>
+      <div><span style="color:var(--muted)">Time:</span><br><strong>${selectedTime}</strong></div>
+      <div><span style="color:var(--muted)">Services:</span><br><strong>${selectedServices.map(s=>s.name).join(', ')}</strong></div>
+      <div><span style="color:var(--muted)">Stylist:</span><br><strong>${stylist}</strong></div>
+      <div><span style="color:var(--muted)">Chair:</span><br><strong>${chair}</strong></div>
+      <div><span style="color:var(--muted)">Total:</span><br><strong style="color:var(--gold)">₹${total.toLocaleString()}</strong></div>
+      ${notes ? `<div style="grid-column:1/-1"><span style="color:var(--muted)">Notes:</span><br><strong>${notes}</strong></div>` : ''}
+    </div>
+  `;
+}
+
+function submitBooking() {
+  const fn = document.getElementById('f-firstname').value;
+  const ln = document.getElementById('f-lastname').value;
+  const email = document.getElementById('f-email').value;
+  const phone = document.getElementById('f-phone').value;
+  const date = document.getElementById('f-date').value;
+  const stylist = document.getElementById('f-stylist').value || 'Auto-assigned';
+  const chair = document.getElementById('f-chair').value || 'Chair ' + Math.floor(Math.random()*8+1);
+  const notes = document.getElementById('f-notes').value;
+  const payment = document.getElementById('f-payment').value;
+  const total = selectedServices.reduce((s, x) => s + x.price, 0);
+
+  const apptId = 'SE' + Date.now().toString().slice(-6);
+  const appt = {
+    id: apptId,
+    client: `${fn} ${ln}`,
+    email, phone, date,
+    time: selectedTime,
+    service: selectedServices.map(s => s.name).join(', '),
+    stylist, chair, notes, payment,
+    price: total,
+    status: 'confirmed'
+  };
+
+  // Save to both DBs
+  clientDB.addClient({ name: `${fn} ${ln}`, email, phone });
+  clientDB.addAppointment(appt);
+  adminDB.appointments.unshift({ ...appt, date: date === new Date().toISOString().split('T')[0] ? 'Today' : date });
+  adminDB.save();
+
+  // Show confirmation
+  document.getElementById('booking-form-wrap').style.display = 'none';
+  const conf = document.getElementById('booking-confirmation');
+  conf.classList.add('active');
+  document.getElementById('confirm-id').textContent = 'Booking ID: ' + apptId;
+  document.getElementById('confirm-details').innerHTML = `
+    <div style="display:grid;gap:10px;font-size:14px">
+      <div class="detail-row"><span class="detail-label">Service</span><span class="detail-val">${appt.service}</span></div>
+      <div class="detail-row"><span class="detail-label">Date & Time</span><span class="detail-val">${date} at ${selectedTime}</span></div>
+      <div class="detail-row"><span class="detail-label">Stylist</span><span class="detail-val">${stylist}</span></div>
+      <div class="detail-row"><span class="detail-label">Chair</span><span class="detail-val">${chair}</span></div>
+      <div class="detail-row" style="border:none"><span class="detail-label">Amount</span><span class="detail-val" style="color:var(--gold);font-size:18px">₹${total.toLocaleString()}</span></div>
+    </div>
+  `;
+  showToast('Appointment confirmed! 🎉', 'success');
+
+  // Show history in sidebar
+  const history = clientDB.getClientAppointments(email);
+  document.getElementById('client-history').innerHTML = history.map(a =>
+    `<div style="padding:6px 0;border-bottom:1px solid var(--cream)">${a.service} – ${a.date} ${a.time}</div>`
+  ).join('') || 'No bookings found.';
+}
+
+function resetBooking() {
+  currentStep = 1;
+  selectedServices = [];
+  selectedTime = '';
+  document.getElementById('booking-form-wrap').style.display = '';
+  document.getElementById('booking-confirmation').classList.remove('active');
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+  ['f-firstname','f-lastname','f-email','f-phone','f-notes'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('sdot-' + i);
+    dot.classList.remove('active','done');
+    if (i === 1) dot.classList.add('active');
+    dot.textContent = i;
+  }
+  for (let i = 1; i <= 3; i++) document.getElementById('sline-' + i).classList.remove('done');
+  renderBookingServices();
+  updateSummary();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADMIN PANEL
+// ═══════════════════════════════════════════════════════
+let editingId = null;
+
+function adminLogin() {
+  const u = document.getElementById('admin-user').value;
+  const p = document.getElementById('admin-pass').value;
+  if (u === adminDB.credentials.username && p === adminDB.credentials.password) {
+    document.getElementById('admin-login-view').style.display = 'none';
+    document.getElementById('admin-dashboard-view').classList.add('active');
+    renderAdminDashboard();
+  } else {
+    showToast('Invalid credentials', 'error');
+  }
+}
+
+function adminLogout() {
+  document.getElementById('admin-login-view').style.display = 'flex';
+  document.getElementById('admin-dashboard-view').classList.remove('active');
+}
+
+function renderAdminDashboard() {
+  const appts = adminDB.appointments;
+  const todayAppts = appts.filter(a => a.date === 'Today' || a.date === new Date().toISOString().split('T')[0]);
+  const pending = appts.filter(a => a.status === 'pending').length;
+  const available = adminDB.chairs.filter(c => c.status === 'available').length;
+  const revenue = todayAppts.filter(a => a.status === 'completed').reduce((s,a) => s + (a.price||0), 0);
+
+  document.getElementById('stat-today').textContent = todayAppts.length;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-available').textContent = available;
+  document.getElementById('stat-revenue').textContent = '₹' + revenue.toLocaleString();
+
+  // Appointments table
+  document.getElementById('admin-appt-body').innerHTML = appts.map(a => `
+    <tr>
+      <td>
+        <div style="font-weight:500">${a.client}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.35)">${a.email||''}</div>
+      </td>
+      <td style="color:rgba(255,255,255,.7)">${a.service}</td>
+      <td>
+        <div>${a.time}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.35)">${a.date}</div>
+      </td>
+      <td style="color:rgba(255,255,255,.7)">${a.chair}</td>
+      <td><span class="badge ${a.status}">${a.status}</span></td>
+      <td><button class="edit-time-btn" onclick="openEditModal('${a.id}')">✎ Edit</button></td>
+    </tr>
+  `).join('');
+
+  // Chairs list
+  document.getElementById('admin-chairs-list').innerHTML = adminDB.chairs.map(c => `
+    <div class="admin-chair-item">
+      <div class="admin-chair-num">${c.id}</div>
+      <div class="admin-chair-info">
+        <div class="admin-chair-name">${c.label}</div>
+        <div class="admin-chair-stylist">${c.stylist}</div>
+      </div>
+      <span class="chair-badge ${c.status}">${c.status}</span>
+    </div>
+  `).join('');
+}
+
+function openEditModal(id) {
+  editingId = id;
+  const appt = adminDB.appointments.find(a => a.id === id);
+  document.getElementById('modal-client').value = appt.client;
+  document.getElementById('modal-date').value = appt.date === 'Today' ? new Date().toISOString().split('T')[0] : appt.date;
+  document.getElementById('modal-time').value = '';
+  document.getElementById('modal-chair').value = appt.chair;
+  document.getElementById('modal-status').value = appt.status;
+  document.getElementById('edit-modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('active');
+  editingId = null;
+}
+
+function saveAppointment() {
+  if (!editingId) return;
+  const date = document.getElementById('modal-date').value;
+  const time = document.getElementById('modal-time').value;
+  const chair = document.getElementById('modal-chair').value;
+  const status = document.getElementById('modal-status').value;
+
+  const timeDisplay = time ? (() => {
+    const [h, m] = time.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    return `${h > 12 ? h - 12 : h || 12}:${String(m).padStart(2,'0')} ${ampm}`;
+  })() : null;
+
+  const changes = { date, chair, status };
+  if (timeDisplay) changes.time = timeDisplay;
+
+  adminDB.updateAppointment(editingId, changes);
+  closeModal();
+  renderAdminDashboard();
+  renderHeroChairs();
+  showToast('Appointment updated successfully ✓', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.innerHTML = (type === 'success' ? '✓ ' : '⚠ ') + msg;
+  t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLOSE MODAL ON OVERLAY CLICK
+// ═══════════════════════════════════════════════════════
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─ init ─
+renderServices();
+renderHeroChairs();
+</script>
+</body>
+</html>
